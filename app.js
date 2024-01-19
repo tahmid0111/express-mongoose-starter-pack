@@ -1,7 +1,7 @@
 // initial packages
 const express=require('express')
 const app=express()
-const mongooe=require('mongoose')
+const mongoose=require('mongoose')
 const router=require('./src/routes/api')
 
 // extra packages
