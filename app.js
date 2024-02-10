@@ -14,7 +14,7 @@ app.use(express.json())
 app.use(cors())
 
 // mongoDb connection
-let url = `mongodb://127.0.0.1:27017`
+let url = process.env.URL
 
 mongoose.connect(url)
 
