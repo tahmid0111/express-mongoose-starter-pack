@@ -1,1 +1,56 @@
-const express=require('express')
+const UserModel = require("../models/userModel");
+
+let bcrypt = require("bcrypt");
+let jwt = require("jsonwebtoken");
+
+exports.RegistrationService = async (req) => {
+  let reqBody = req.body;
+  let hashedPass = await bcrypt.hash(reqBody.Password, 10);
+  let myBody = {
+    ...reqBody, // Spread the properties of reqBody
+    Password: hashedPass, // Update the Password property
+  };
+  try {
+    const result = await UserModel.create(myBody);
+    return { status: "success", data: result };
+  } catch (error) {
+    console.log(error);
+    return { status: "fail" };
+  }
+};
+
+exports.LoginService = async (req) => {
+  let reqBody = req.body;
+  let aggregationPipeline = [{ $match: { Email: reqBody.Email } }];
+
+  try {
+    let user = await UserModel.aggregate(aggregationPipeline);
+    if (user) {
+      // Encoded passwords can never be decoded, so we should check them in this way
+      let result = await bcrypt.compare(reqBody.Password, user[0].Password);
+      if (result) {
+        let Payload = {
+          exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
+          data: user[0],
+        };
+        let token = jwt.sign(Payload, "secretkey");
+        return { status: "success", data: token };
+      } else {
+        return { status: "wrong" };
+      }
+    }
+  } catch (error) {
+    return { status: "fail" };
+  }
+};
+
+exports.ReadUserService = async (req) => {
+  const aggregationPipeline = [{ $match: { Email: req.headers.email } }];
+  try {
+    const result = await UserModel.aggregate(aggregationPipeline);
+    const Singleobject = result[0];
+    return { status: "success", data: Singleobject };
+  } catch (error) {
+    return { status: "fail" };
+  }
+};
