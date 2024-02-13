@@ -9,6 +9,6 @@ exports.AuthVerify = (req, res, next) => {
 
     next(); // giving permission to move on
   } catch (error) {
-    res.json({ status: "fail" });
+    res.json({ status: "fail", message: "Check your login access" });
   }
 }
