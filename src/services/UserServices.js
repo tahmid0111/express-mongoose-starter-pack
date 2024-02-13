@@ -54,3 +54,24 @@ exports.ReadUserService = async (req) => {
     return { status: "fail" };
   }
 };
+
+exports.UpdateUserService = async (req) => {
+  let reqBody = req.body;
+  let Query = { Email: req.headers.email };
+  try {
+    const result = await UserModel.updateOne(Query, reqBody);
+    return { status: "success", data: result };
+  } catch (error) {
+    return { status: "fail" };
+  }
+};
+
+exports.DeleteUserService = async (req) => {
+  let Query = { Email: req.headers.email };
+  try {
+    const result = await UserModel.deleteOne(Query);
+    return { status: "success" };
+  } catch (error) {
+    return { status: "fail" };
+  }
+};
