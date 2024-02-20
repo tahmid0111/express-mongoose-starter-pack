@@ -45,7 +45,7 @@ exports.ReadUser = async (req, res) => {
   } else {
     res.status(404).json({ status: "fail", message: "something went wrong" });
   }
-}
+};
 
 exports.UpdateUser = async (req, res) => {
   let result = await UpdateUserService(req);
@@ -57,7 +57,7 @@ exports.UpdateUser = async (req, res) => {
   } else {
     res.status(404).json({ status: "fail", message: "something went wrong" });
   }
-}
+};
 
 exports.DeleteUser = async (req, res) => {
   let result = await DeleteUserService(req);
@@ -69,4 +69,4 @@ exports.DeleteUser = async (req, res) => {
   } else {
     res.status(404).json({ status: "fail", message: "something went wrong" });
   }
-}
+};

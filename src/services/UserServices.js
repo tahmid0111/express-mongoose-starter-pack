@@ -1,17 +1,17 @@
 const UserModel = require("../models/userModel");
 
-let bcrypt = require("bcrypt");
+// let bcrypt = require("bcrypt");
 let jwt = require("jsonwebtoken");
 
 exports.RegistrationService = async (req) => {
   let reqBody = req.body;
-  let hashedPass = await bcrypt.hash(reqBody.Password, 10);
-  let myBody = {
-    ...reqBody, // Spread the properties of reqBody
-    Password: hashedPass, // Update the Password property
-  };
+  // let hashedPass = await bcrypt.hash(reqBody.Password, 10);
+  // let myBody = {
+  //   ...reqBody, // Spread the properties of reqBody
+  //   Password: hashedPass, // Update the Password property
+  // };
   try {
-    const result = await UserModel.create(myBody);
+    const result = await UserModel.create(reqBody);
     return { status: "success", data: result };
   } catch (error) {
     console.log(error);
@@ -22,16 +22,18 @@ exports.RegistrationService = async (req) => {
 exports.LoginService = async (req) => {
   let reqBody = req.body;
   let aggregationPipeline = [{ $match: { Email: reqBody.Email } }];
+  let aggregationPipeline2 = [{ $match: { Password: reqBody.Password } }];
 
   try {
     let user = await UserModel.aggregate(aggregationPipeline);
     if (user) {
       // Encoded passwords can never be decoded, so we should check them in this way
-      let result = await bcrypt.compare(reqBody.Password, user[0].Password);
-      if (result) {
+      // let result = await bcrypt.compare(reqBody.Password, user[0].Password);
+      let result = await UserModel.aggregate(aggregationPipeline2);
+      if (result[0]) {
         let Payload = {
           exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
-          data: user[0],
+          data: result[0],
         };
         let token = jwt.sign(Payload, "secretkey");
         return { status: "success", data: token };
@@ -57,9 +59,14 @@ exports.ReadUserService = async (req) => {
 
 exports.UpdateUserService = async (req) => {
   let reqBody = req.body;
+  let myBody = {
+    FirstName: reqBody.FirstName,
+    LastName: reqBody.LastName,
+    Password: reqBody.Password
+  }
   let Query = { Email: req.headers.email };
   try {
-    const result = await UserModel.updateOne(Query, reqBody);
+    const result = await UserModel.updateOne(Query, myBody);
     return { status: "success", data: result };
   } catch (error) {
     return { status: "fail" };
