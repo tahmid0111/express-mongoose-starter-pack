@@ -21,27 +21,26 @@ exports.RegistrationService = async (req) => {
 
 exports.LoginService = async (req) => {
   let reqBody = req.body;
+    // let Query = { Email: reqBody.Email };
   let aggregationPipeline = [{ $match: { Email: reqBody.Email } }];
   let aggregationPipeline2 = [{ $match: { Password: reqBody.Password } }];
 
-  try {
-    let user = await UserModel.aggregate(aggregationPipeline);
-    if (user) {
-      // Encoded passwords can never be decoded, so we should check them in this way
-      // let result = await bcrypt.compare(reqBody.Password, user[0].Password);
-      let result = await UserModel.aggregate(aggregationPipeline2);
-      if (result[0]) {
-        let Payload = {
-          exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
-          data: result[0],
-        };
-        let token = jwt.sign(Payload, "secretkey");
-        return { status: "success", data: token };
-      } else {
-        return { status: "wrong" };
-      }
+  let user = await UserModel.aggregate(aggregationPipeline);
+  if (user[0]) {
+    // Encoded passwords can never be decoded, so we should check them in this way
+    // let result = await bcrypt.compare(reqBody.Password, user[0].Password);
+    let result = await UserModel.aggregate(aggregationPipeline2);
+    if (result[0]) {
+      let Payload = {
+        exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
+        data: result[0],
+      };
+      let token = jwt.sign(Payload, "secretkey");
+      return { status: "success", data: token };
+    } else {
+      return { status: "wrong" };
     }
-  } catch (error) {
+  } else {
     return { status: "fail" };
   }
 };
@@ -62,8 +61,8 @@ exports.UpdateUserService = async (req) => {
   let myBody = {
     FirstName: reqBody.FirstName,
     LastName: reqBody.LastName,
-    Password: reqBody.Password
-  }
+    Password: reqBody.Password,
+  };
   let Query = { Email: req.headers.email };
   try {
     const result = await UserModel.updateOne(Query, myBody);
