@@ -1,8 +1,8 @@
-# Express js and MongoDB Quick Start Pack
+# Express js and MongoDB Quick Start Pack 😊
 
-### _by Tahmid Emam_
+### _by Tahmid Emam_ 🤖
 
-# _Features_
+# _Features_ ⬇️
 
 - ### The project follows a clear and organized folder structure to maintain code readability and scalability.
 
@@ -25,7 +25,7 @@ npm install
 ```
 
 ## 3. Add .env file:
-### Create a .env file for storing all the secret information like database URI there.
+- ### Create a .env file for storing all the secret information like database URI there.
 
 ## 4. Configure MongoDB:
 - ### Set up a MongoDB database either locally or using a cloud-based service.
@@ -37,7 +37,7 @@ npm install
 npm start
 ```
 ## 6. Remove GitHub Link:
-### Delete the hidden folder named .git of this project and it will lost connection with my repository.
+- ### Delete the hidden folder named .git of this project and it will lost connection with my repository.
 
-## 7. Happy Coding:
-### You can now update the project name as per your need and start contributing in your own ways.
+## 7. Happy Coding:😊😊
+- ### You can now update the project name as per your need and start contributing in your own ways.
