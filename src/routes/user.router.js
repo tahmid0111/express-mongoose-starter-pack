@@ -2,7 +2,7 @@ const express=require('express')
 const router=express.Router()
 
 // importing user controllers
-const { Registration, Login, ReadUser, UpdateUser, DeleteUser } = require('../controllers/userController')
+const { Registration, Login, ReadUser, UpdateUser, DeleteUser } = require('../controllers/user.controller')
 const { AuthVerify } = require('../middleware/tokenVerify')
 
 router.post('/register', Registration)
