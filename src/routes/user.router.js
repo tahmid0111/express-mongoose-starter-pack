@@ -9,6 +9,7 @@ router.post('/register', Registration)
 router.post('/login', Login)
 router.get('/readuser', AuthVerify, ReadUser)
 router.post('/updateuser', AuthVerify, UpdateUser)
+router.post('/updatepassword', AuthVerify, UpdateUser)
 router.post('/deleteuser', AuthVerify, DeleteUser)
 
 module.exports = router

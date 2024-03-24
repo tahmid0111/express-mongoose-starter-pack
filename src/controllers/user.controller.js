@@ -4,34 +4,50 @@ const {
   ReadUserService,
   UpdateUserService,
   DeleteUserService,
-} = require("../services/userServices");
+} = require("../services/user.service");
 
 exports.Registration = async (req, res) => {
   let result = await RegistrationService(req);
-  if (result.status === "success") {
-    res.status(200).json({
-      status: "success",
-      message: "Registration Success",
-      data: result.data,
-    });
-  } else {
-    res.status(404).json({ status: "fail", message: "Registration Failed" });
-  }
+
+  const responseStatus = result.status;
+  const messages = {
+    success: "User Successfully Registered",
+    invalidEmail: "Please provide a valid Email",
+    invalidPass: "Use a strong Password",
+    invalidNumber: "Give a bangladeshi Phone Number",
+    existingUser: "An account is already registered with this email",
+    fail: "Something went wrong",
+  };
+
+  const message = messages[responseStatus];
+  const data = responseStatus === "success" ? result.data : undefined;
+
+  res.status(responseStatus === "success" ? 200 : 404).json({
+    status: responseStatus,
+    message,
+    data,
+  });
 };
 
 exports.Login = async (req, res) => {
   let result = await LoginService(req);
-  if (result.status === "success") {
-    res.json({
-      status: "success",
-      message: "Token Generated Successfully",
-      token: result.data,
-    });
-  } else if (result.status === "wrong") {
-    res.json({ status: "wrong", message: "invalid username or password" });
-  } else {
-    res.status(404).json({ status: "fail", message: "something went wrong" });
-  }
+
+  const responseStatus = result.status;
+  const messages = {
+    success: "Login Successfull",
+    newUser: "There is no account associated with this Email",
+    wrongPassword: "You have provided a wrong pssword",
+    fail: "Something went wrong",
+  };
+
+  const message = messages[responseStatus];
+  const data = responseStatus === "success" ? result.data : undefined;
+
+  res.status(responseStatus === "success" ? 200 : 404).json({
+    status: responseStatus,
+    message,
+    data,
+  });
 };
 
 exports.ReadUser = async (req, res) => {
@@ -49,14 +65,23 @@ exports.ReadUser = async (req, res) => {
 
 exports.UpdateUser = async (req, res) => {
   let result = await UpdateUserService(req);
-  if (result.status === "success") {
-    res.status(200).json({
-      status: "success",
-      message: "Your data has updated successfully",
-    });
-  } else {
-    res.status(404).json({ status: "fail", message: "something went wrong" });
-  }
+
+  const responseStatus = result.status;
+  const messages = {
+    success: "Update successful. Your information has been updated",
+    foundEmail: "Unexpected movement",
+    foundPassword: "Unexpected movement",
+    fail: "Something went wrong",
+  };
+
+  const message = messages[responseStatus];
+  const data = responseStatus === "success" ? result.data : undefined;
+
+  res.status(responseStatus === "success" ? 200 : 404).json({
+    status: responseStatus,
+    message,
+    data,
+  });
 };
 
 exports.DeleteUser = async (req, res) => {

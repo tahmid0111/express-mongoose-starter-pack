@@ -13,8 +13,8 @@ securityMiddleware(app);
 
 // database connection
 connectDB();
-// routing implement
 
+// routing implement
 app.use("/user/api/v1", userRouter);
 app.use("/product/api/v1", productRouter);
 

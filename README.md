@@ -6,7 +6,7 @@
 
 - ### The project follows a clear and organized folder structure to maintain code readability and scalability.
 
-- ### Includes necessary packages such as Express.js, Mongoose, nodemon, cors, and others, reducing the setup time for new projects.
+- ### Includes necessary packages such as Express.js, Mongoose, nodemon, cors, json web token, bcrypt, dotenv and others, reducing the setup time for new projects.
 
 # Getting Started
 
