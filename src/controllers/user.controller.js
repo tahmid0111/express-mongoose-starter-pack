@@ -6,6 +6,8 @@ const {
   DeleteUserService,
 } = require("../services/user.service");
 
+const { sendError } = require("../helpers/error.helper");
+
 exports.Registration = async (req, res) => {
   let result = await RegistrationService(req);
 
@@ -54,23 +56,37 @@ exports.ReadUser = async (req, res) => {
   let result = await ReadUserService(req);
   if (result.status === "success") {
     res.status(200).json({
-      status: "success",
+      status: result.status,
       message: "Your expected data is here",
       data: result.data,
     });
   } else {
-    res.status(404).json({ status: "fail", message: "something went wrong" });
+    sendError(res);
   }
 };
 
 exports.UpdateUser = async (req, res) => {
   let result = await UpdateUserService(req);
 
+  if (result.status === "success") {
+    res.status(200).json({
+      status: result.status,
+      message: "Update successful. Your information has been updated",
+    });
+  } else {
+    sendError(res);
+  }
+};
+
+exports.UpdatePassword = async (req, res) => {
+  let result = await UpdateUserService(req);
+
   const responseStatus = result.status;
   const messages = {
-    success: "Update successful. Your information has been updated",
-    foundEmail: "Unexpected movement",
-    foundPassword: "Unexpected movement",
+    success: "Password updated successfully",
+    wrongPassword: "Incorrect password",
+    samePassword: "Try a new password",
+    invalidPassword: "Please use a strong password",
     fail: "Something went wrong",
   };
 
@@ -88,10 +104,11 @@ exports.DeleteUser = async (req, res) => {
   let result = await DeleteUserService(req);
   if (result.status === "success") {
     res.status(200).json({
-      status: "success",
+      status: result.status,
       message: "Your data has removed successfully",
     });
   } else {
-    res.status(404).json({ status: "fail", message: "something went wrong" });
+    sendError(res);
   }
 };
+

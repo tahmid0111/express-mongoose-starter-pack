@@ -2,6 +2,7 @@ const UserModel = require("../models/user.model");
 // third party packages
 let bcrypt = require("bcrypt");
 let jwt = require("jsonwebtoken");
+const { sendStatus } = require("../helpers/error.helper");
 // regex for validation
 // This regular expression is quite complex and allows for a wide range of email address formats, including those with special characters and IP addresses in the domain part. It's very inclusive and aims to match most email addresses conforming to standards.
 const emailRegex =
@@ -92,6 +93,33 @@ exports.UpdateUserService = async (req) => {
       return { status: "fail" };
     }
     let result = await UserModel.updateOne(Query, reqBody);
+    return { status: "success", data: result };
+  } catch (error) {
+    return { status: "fail" };
+  }
+};
+
+exports.UpdatePasswordService = async (req) => {
+  try {
+    let reqBody = req.body;
+    let email = req.headers.email;
+    let Query = { Email: email };
+    let data = await UserModel.findOne(Query);
+    let user = await bcrypt.compare(reqBody.OldPassword, data.Password);
+    if (!user) {
+      return { status: "wrongPassword" };
+    }
+    if (reqBody.OldPassword === reqBody.NewPassword) {
+      return { status: "samePassword" };
+    }
+    if (!passwordRegex.test(reqBody.NewPassword)) {
+      return { status: "invalidPassword" };
+    }
+    let hashedPass = await bcrypt.hash(reqBody.NewPassword, 10);
+    let myBody = {
+      Password: hashedPass,
+    };
+    let result = await UserModel.updateOne(Query, myBody);
     return { status: "success", data: result };
   } catch (error) {
     return { status: "fail" };
