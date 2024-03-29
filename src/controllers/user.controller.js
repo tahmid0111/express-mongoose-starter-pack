@@ -80,7 +80,11 @@ exports.ForgetPasswordVerify = async (req, res) => {
     res.status(200).json({
       status: result.status,
       message: "Your expected data is here",
-      data: result.data,
+    });
+  } else if (result.status === "wrongOTP") {
+    res.status(200).json({
+      status: result.status,
+      message: "wrong otp code",
     });
   } else {
     sendError(res);

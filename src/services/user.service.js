@@ -47,6 +47,7 @@ exports.RegistrationService = async (req) => {
     };
 
     let result = await UserModel.create(myBody);
+    await OTPModel.create({Email: reqBody.Email});
     return { status: "success", data: result };
   } catch (error) {
     return { status: "fail" };
@@ -102,10 +103,17 @@ exports.ForgetPasswordRequestService = async (req) => {
 
 exports.ForgetPasswordVerifyService = async (req) => {
   try {
-    let {email, otp} = req.body;
-    let Query = { Email: email, otp: otp };
-    const result = await UserModel.findOne(Query);
-    return { status: "success", data: result };
+    let { Email, otp } = req.body;
+    let Query = { Email: Email, otp: otp };
+    let result = await OTPModel.findOne(Query);
+    if(!result) {
+      return {status: 'wrongOTP'}
+    }
+    await OTPModel.updateOne(
+      Query,
+      {$set: {Status: true}},
+    )
+    return { status: "success", };
   } catch (error) {
     return { status: "fail" };
   }

@@ -10,7 +10,9 @@ const DataSchema = mongoose.Schema(
     },
     otp: {
       type: Number,
+      default: 0,
       required: true,
+      trim: true,
     },
     Status: {
       type: Boolean,
