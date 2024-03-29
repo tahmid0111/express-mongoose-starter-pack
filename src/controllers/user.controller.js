@@ -9,7 +9,7 @@ const {
   RecoveryPasswordService,
 } = require("../services/user.service");
 
-const { sendError } = require("../helpers/error.helper");
+const { sendError } = require("../helpers/important/error.helper");
 
 exports.Registration = async (req, res) => {
   let result = await RegistrationService(req);

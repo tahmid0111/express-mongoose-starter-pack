@@ -1,36 +1,24 @@
-const UserModel = require("../models/user.model");
-const OTPModel = require("../models/otp.model");
+const UserModel = require("../models/user/user.model");
+const OTPModel = require("../models/user/otp.model");
 // third party packages
 let bcrypt = require("bcrypt");
 let jwt = require("jsonwebtoken");
 // helpers
-const { CreateOTP, SendOTP } = require("../helpers/otp.helper");
+const { CreateOTP, SendOTP } = require("../helpers/email/otp.helper");
 const { EncodePassword, DecodePassword } = require("../helpers/bcrypt.helper");
-// regex for validation
-// This regular expression is quite complex and allows for a wide range of email address formats, including those with special characters and IP addresses in the domain part. It's very inclusive and aims to match most email addresses conforming to standards.
-const emailRegex =
-  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-// Contains at least one lowercase letter.
-// Contains at least one uppercase letter.
-// Contains at least one digit.
-// Contains at least one special character from the specified set.
-// Is at least 8 characters long.
-const passwordRegex =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-// this regex allows only valid bangladeshi numbers
-const bangladeshMobileRegex = /^(?:\+?880)?01[3-9]\d{8}$/;
+const { ValidateEmail, ValidatePassword, ValidatePhoneNumber } = require("../helpers/regex.helper");
 
 exports.RegistrationService = async (req) => {
   try {
     let reqBody = req.body;
     // Validating given info using regex
-    if (!emailRegex.test(reqBody.Email)) {
+    if (!ValidateEmail(reqBody.Email)) {
       return { status: "invalidEmail" };
     }
-    if (!passwordRegex.test(reqBody.Password)) {
+    if (!ValidatePassword(reqBody.Password)) {
       return { status: "invalidPass" };
     }
-    if (!bangladeshMobileRegex.test(reqBody.Mobile)) {
+    if (!ValidatePhoneNumber(reqBody.Mobile)) {
       return { status: "invalidNumber" };
     }
     // checking existing user's emails
@@ -152,14 +140,14 @@ exports.UpdatePasswordService = async (req) => {
     if (!data) {
       return { status: "fail" };
     }
-    let user = await bcrypt.compare(reqBody.OldPassword, data.Password);
+    let user = await DecodePassword(reqBody.OldPassword, data.Password);
     if (!user) {
       return { status: "wrongPassword" };
     }
     if (reqBody.OldPassword === reqBody.NewPassword) {
       return { status: "samePassword" };
     }
-    if (!passwordRegex.test(reqBody.NewPassword)) {
+    if (!ValidatePassword(reqBody.NewPassword)) {
       return { status: "weakPassword" };
     }
     let hashedPass = await EncodePassword(reqBody.NewPassword)
@@ -182,10 +170,10 @@ exports.RecoveryPasswordService = async (req) => {
     if(result.Status !== true) {
       return { status: "invalidUser" }
     }
-    if (!passwordRegex.test(Password)) {
+    if (!ValidatePassword(Password)) {
       return { status: "weakPassword" };
     }
-    let hashedPassword = await bcrypt.hash(Password, 10);
+    let hashedPassword = await EncodePassword(Password);
     await UserModel.updateOne(
       Query,
       {$set: { Password: hashedPassword } },
