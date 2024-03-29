@@ -6,6 +6,7 @@ const {
   DeleteUserService,
   ForgetPasswordRequestService,
   ForgetPasswordVerifyService,
+  RecoveryPasswordService,
 } = require("../services/user.service");
 
 const { sendError } = require("../helpers/error.helper");
@@ -126,7 +127,28 @@ exports.UpdatePassword = async (req, res) => {
     success: "Password updated successfully",
     wrongPassword: "Incorrect password",
     samePassword: "Try a new password",
-    invalidPassword: "Please use a strong password",
+    weakPassword: "Please use a strong password",
+    fail: "Something went wrong",
+  };
+
+  const message = messages[responseStatus];
+  const data = responseStatus === "success" ? result.data : undefined;
+
+  res.status(responseStatus === "success" ? 200 : 404).json({
+    status: responseStatus,
+    message,
+    data,
+  });
+};
+
+exports.RecoveryPassword = async (req, res) => {
+  let result = await RecoveryPasswordService(req);
+
+  const responseStatus = result.status;
+  const messages = {
+    success: "Password updated successfully",
+    invalidUser: "Invalid user",
+    weakPassword: "Please use a strong password",
     fail: "Something went wrong",
   };
 

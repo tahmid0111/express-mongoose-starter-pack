@@ -1,11 +1,11 @@
 const UserModel = require("../models/user.model");
+const OTPModel = require("../models/otp.model");
 // third party packages
 let bcrypt = require("bcrypt");
 let jwt = require("jsonwebtoken");
-const { sendStatus } = require("../helpers/error.helper");
-const SendEmail = require("../helpers/email.helper");
+// helpers
 const { CreateOTP, SendOTP } = require("../helpers/otp.helper");
-const OTPModel = require("../models/otp.model");
+const { EncodePassword, DecodePassword } = require("../helpers/bcrypt.helper");
 // regex for validation
 // This regular expression is quite complex and allows for a wide range of email address formats, including those with special characters and IP addresses in the domain part. It's very inclusive and aims to match most email addresses conforming to standards.
 const emailRegex =
@@ -40,7 +40,7 @@ exports.RegistrationService = async (req) => {
       return { status: "existingUser" };
     }
     // if all is okay then a new user will be registered with an encrypted password
-    let hashedPass = await bcrypt.hash(reqBody.Password, 10);
+    let hashedPass = await EncodePassword(reqBody.Password)
     let myBody = {
       ...reqBody,
       Password: hashedPass, // Update the Password property
@@ -62,7 +62,7 @@ exports.LoginService = async (req) => {
     if (!user) {
       return { status: "newUser" };
     }
-    let result = await bcrypt.compare(reqBody.Password, user.Password);
+    let result = await DecodePassword(reqBody.Password, user.Password);
     if (!result) {
       return { status: "wrongPassword" };
     }
@@ -160,9 +160,9 @@ exports.UpdatePasswordService = async (req) => {
       return { status: "samePassword" };
     }
     if (!passwordRegex.test(reqBody.NewPassword)) {
-      return { status: "invalidPassword" };
+      return { status: "weakPassword" };
     }
-    let hashedPass = await bcrypt.hash(reqBody.NewPassword, 10);
+    let hashedPass = await EncodePassword(reqBody.NewPassword)
     let myBody = {
       Password: hashedPass,
     };
@@ -173,6 +173,29 @@ exports.UpdatePasswordService = async (req) => {
     return { status: "fail" };
   }
 };
+
+exports.RecoveryPasswordService = async (req) => {
+  try {
+    let { Email, Password } = req.body;
+    let Query = { Email: Email };
+    let result = await OTPModel.findOne(Query)
+    if(result.Status !== true) {
+      return { status: "invalidUser" }
+    }
+    if (!passwordRegex.test(Password)) {
+      return { status: "weakPassword" };
+    }
+    let hashedPassword = await bcrypt.hash(Password, 10);
+    await UserModel.updateOne(
+      Query,
+      {$set: { Password: hashedPassword } },
+    )
+
+    return {status: "success"}
+  } catch (error) {
+    return {status: "fail"}
+  }
+}
 
 exports.DeleteUserService = async (req) => {
   let Query = { Email: req.headers.email };
