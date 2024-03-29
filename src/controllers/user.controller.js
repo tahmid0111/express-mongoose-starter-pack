@@ -4,6 +4,8 @@ const {
   ReadUserService,
   UpdateUserService,
   DeleteUserService,
+  ForgetPasswordRequestService,
+  ForgetPasswordVerifyService,
 } = require("../services/user.service");
 
 const { sendError } = require("../helpers/error.helper");
@@ -52,8 +54,42 @@ exports.Login = async (req, res) => {
   });
 };
 
+exports.ForgetPasswordRequest = async (req, res) => {
+  let result = await ForgetPasswordRequestService(req);
+
+  if (result.status === "success") {
+    res.status(200).json({
+      status: result.status,
+      message: "6 Digit OTP has been send",
+      userEmail: result.userEmail,
+    });
+  } else if (result.status === "invalidEmail") {
+    res.status(200).json({
+      status: result.status,
+      message: "Please provide the right email",
+    });
+  } else {
+    sendError(res);
+  }
+};
+
+exports.ForgetPasswordVerify = async (req, res) => {
+  let result = await ForgetPasswordVerifyService(req);
+
+  if (result.status === "success") {
+    res.status(200).json({
+      status: result.status,
+      message: "Your expected data is here",
+      data: result.data,
+    });
+  } else {
+    sendError(res);
+  }
+};
+
 exports.ReadUser = async (req, res) => {
   let result = await ReadUserService(req);
+
   if (result.status === "success") {
     res.status(200).json({
       status: result.status,
@@ -102,6 +138,7 @@ exports.UpdatePassword = async (req, res) => {
 
 exports.DeleteUser = async (req, res) => {
   let result = await DeleteUserService(req);
+
   if (result.status === "success") {
     res.status(200).json({
       status: result.status,
@@ -111,4 +148,3 @@ exports.DeleteUser = async (req, res) => {
     sendError(res);
   }
 };
-
