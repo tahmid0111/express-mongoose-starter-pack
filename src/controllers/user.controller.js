@@ -18,8 +18,8 @@ exports.Registration = async (req, res) => {
   const messages = {
     success: "User Successfully Registered",
     invalidEmail: "Please provide a valid Email",
-    invalidPass: "Use a strong Password",
-    invalidNumber: "Give a bangladeshi Phone Number",
+    weakPassword: "Use a strong Password",
+    invalidNumber: "Give a valid Bangladeshi Phone Number",
     existingUser: "An account is already registered with this email",
     fail: "Something went wrong",
   };
@@ -41,7 +41,7 @@ exports.Login = async (req, res) => {
   const messages = {
     success: "Login Successfull",
     newUser: "There is no account associated with this Email",
-    wrongPassword: "You have provided a wrong pssword",
+    incorrectPassword: "Incorrect Password",
     fail: "Something went wrong",
   };
 
@@ -53,43 +53,6 @@ exports.Login = async (req, res) => {
     message,
     data,
   });
-};
-
-exports.ForgetPasswordRequest = async (req, res) => {
-  let result = await ForgetPasswordRequestService(req);
-
-  if (result.status === "success") {
-    res.status(200).json({
-      status: result.status,
-      message: "6 Digit OTP has been send",
-      userEmail: result.userEmail,
-    });
-  } else if (result.status === "invalidEmail") {
-    res.status(200).json({
-      status: result.status,
-      message: "Please provide the right email",
-    });
-  } else {
-    sendError(res);
-  }
-};
-
-exports.ForgetPasswordVerify = async (req, res) => {
-  let result = await ForgetPasswordVerifyService(req, res);
-
-  if (result.status === "success") {
-    res.status(200).json({
-      status: result.status,
-      message: "Your expected data is here",
-    });
-  } else if (result.status === "wrongOTP") {
-    res.status(200).json({
-      status: result.status,
-      message: "wrong otp code",
-    });
-  } else {
-    sendError(res);
-  }
 };
 
 exports.ReadUser = async (req, res) => {
@@ -125,7 +88,7 @@ exports.UpdatePassword = async (req, res) => {
   const responseStatus = result.status;
   const messages = {
     success: "Password updated successfully",
-    wrongPassword: "Incorrect password",
+    incorrectPassword: "Incorrect password",
     samePassword: "Try a new password",
     weakPassword: "Please use a strong password",
     fail: "Something went wrong",
@@ -139,6 +102,56 @@ exports.UpdatePassword = async (req, res) => {
     message,
     data,
   });
+};
+
+exports.DeleteUser = async (req, res) => {
+  let result = await DeleteUserService(req);
+
+  if (result.status === "success") {
+    res.status(200).json({
+      status: result.status,
+      message: "Your has been deleted",
+    });
+  } else {
+    sendError(res);
+  }
+};
+
+exports.ForgetPasswordRequest = async (req, res) => {
+  let result = await ForgetPasswordRequestService(req);
+
+  if (result.status === "success") {
+    res.status(200).json({
+      status: result.status,
+      message: "6 Digit OTP has been send",
+      userEmail: result.userEmail,
+    });
+  } else if (result.status === "invalidEmail") {
+    res.status(200).json({
+      status: result.status,
+      message: "Please provide the right email",
+    });
+  } else {
+    sendError(res);
+  }
+};
+
+exports.ForgetPasswordVerify = async (req, res) => {
+  let result = await ForgetPasswordVerifyService(req, res);
+
+  if (result.status === "success") {
+    res.status(200).json({
+      status: result.status,
+      message: "User verified",
+    });
+  } else if (result.status === "wrongOTP") {
+    res.status(200).json({
+      status: result.status,
+      message: "wrong otp code",
+    });
+  } else {
+    sendError(res);
+  }
 };
 
 exports.RecoveryPassword = async (req, res) => {
@@ -160,17 +173,4 @@ exports.RecoveryPassword = async (req, res) => {
     message,
     data,
   });
-};
-
-exports.DeleteUser = async (req, res) => {
-  let result = await DeleteUserService(req);
-
-  if (result.status === "success") {
-    res.status(200).json({
-      status: result.status,
-      message: "Your data has removed successfully",
-    });
-  } else {
-    sendError(res);
-  }
 };
