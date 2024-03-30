@@ -1,12 +1,10 @@
 const UserModel = require("../models/user/user.model");
 const OTPModel = require("../models/user/otp.model");
-// third party packages
-let bcrypt = require("bcrypt");
-let jwt = require("jsonwebtoken");
 // helpers
-const { CreateOTP, SendOTP } = require("../helpers/email/otp.helper");
-const { EncodePassword, DecodePassword } = require("../helpers/bcrypt.helper");
-const { ValidateEmail, ValidatePassword, ValidatePhoneNumber } = require("../helpers/regex.helper");
+const { CreateOTP, SendOTP } = require("../helpers/important/email.helper");
+const { EncodePassword, DecodePassword } = require("../helpers/others/bcrypt.helper");
+const { ValidateEmail, ValidatePassword, ValidatePhoneNumber } = require("../helpers/others/regex.helper");
+const { EncodeToken, SetCookie } = require("../helpers/important/common.helper");
 
 exports.RegistrationService = async (req) => {
   try {
@@ -42,7 +40,7 @@ exports.RegistrationService = async (req) => {
   }
 };
 
-exports.LoginService = async (req) => {
+exports.LoginService = async (req, res) => {
   try {
     let reqBody = req.body;
     let Query = { Email: reqBody.Email };
@@ -54,13 +52,11 @@ exports.LoginService = async (req) => {
     if (!result) {
       return { status: "wrongPassword" };
     }
-    let Payload = {
-      exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
-      data: user,
-    };
-    let token = jwt.sign(Payload, "secretkey");
+    
+    let token = EncodeToken(user.Email, user._id);
+    SetCookie(res, "token", token)
 
-    return { status: "success", data: token };
+    return { status: "success" };
   } catch (error) {
     return { status: "fail" };
   }

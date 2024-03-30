@@ -5,8 +5,9 @@ const app = express();
 const userRouter = require("./src/routes/user.router");
 const productRouter = require("./src/routes/product.router");
 // imported helpers
-const connectDB = require("./src/helpers/database.helper");
-const securityMiddleware = require("./src/helpers/security.helper");
+
+const securityMiddleware = require("./src/helpers/important/security.helper");
+const { connectDB } = require("./src/helpers/important/common.helper");
 
 // implementing security middlewares
 securityMiddleware(app);

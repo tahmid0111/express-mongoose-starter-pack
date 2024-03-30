@@ -9,7 +9,7 @@ const {
   RecoveryPasswordService,
 } = require("../services/user.service");
 
-const { sendError } = require("../helpers/important/error.helper");
+const { sendError } = require("../helpers/important/common.helper");
 
 exports.Registration = async (req, res) => {
   let result = await RegistrationService(req);
@@ -35,7 +35,7 @@ exports.Registration = async (req, res) => {
 };
 
 exports.Login = async (req, res) => {
-  let result = await LoginService(req);
+  let result = await LoginService(req, res);
 
   const responseStatus = result.status;
   const messages = {
@@ -75,7 +75,7 @@ exports.ForgetPasswordRequest = async (req, res) => {
 };
 
 exports.ForgetPasswordVerify = async (req, res) => {
-  let result = await ForgetPasswordVerifyService(req);
+  let result = await ForgetPasswordVerifyService(req, res);
 
   if (result.status === "success") {
     res.status(200).json({
