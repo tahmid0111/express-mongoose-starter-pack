@@ -26,8 +26,8 @@ exports.ReadAllProductService = async (req) => {
 };
 
 exports.ReadSingleProductService = async (req) => {
-    let ID = req.params.id;
-    let Query = { _id: ID };
+  let ID = req.params.id;
+  let Query = { _id: ID };
   try {
     let result = await ProductModel.findOne(Query);
     return { status: "success", data: result };
@@ -37,9 +37,9 @@ exports.ReadSingleProductService = async (req) => {
 };
 
 exports.UpdateProductService = async (req) => {
-    let ID = req.params.id;
-    let reqBody = req.body;
-    let Query = { _id: ID };
+  let ID = req.params.id;
+  let reqBody = req.body;
+  let Query = { _id: ID };
   try {
     let result = await ProductModel.updateOne(Query, reqBody);
     return { status: "success", data: result };
@@ -49,8 +49,8 @@ exports.UpdateProductService = async (req) => {
 };
 
 exports.DeleteProductService = async (req) => {
-    let ID = req.params.id;
-    let Query = { _id: ID };
+  let ID = req.params.id;
+  let Query = { _id: ID };
   try {
     let result = await ProductModel.deleteOne(Query);
     return { status: "success", data: result };
@@ -60,8 +60,8 @@ exports.DeleteProductService = async (req) => {
 };
 
 exports.DeleteAllProductService = async (req) => {
-    let Email = req.headers.email;
-    let Query = { UserEmail: Email };
+  let Email = req.headers.email;
+  let Query = { UserEmail: Email };
   try {
     let result = await ProductModel.deleteMany(Query);
     return { status: "success", data: result };

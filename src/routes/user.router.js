@@ -13,7 +13,7 @@ const {
   ForgetPasswordVerify,
   RecoveryPassword,
 } = require("../controllers/user.controller");
-const { AuthVerify } = require("../middleware/tokenVerify");
+const { AuthVerify } = require("../middleware/authVerify.middleware");
 
 router.post("/register", Registration);
 router.post("/login", Login);

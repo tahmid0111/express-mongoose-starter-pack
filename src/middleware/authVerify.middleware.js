@@ -1,4 +1,4 @@
-const { DecodeToken } = require("../helpers/important/common.helper");
+const { DecodeToken } = require("../utilities/jwt.utility");
 
 exports.AuthVerify = (req, res, next) => {
   let Token = req.cookies.token;

@@ -4,9 +4,10 @@ const app = express();
 // importing routers
 const userRouter = require("./src/routes/user.router");
 const productRouter = require("./src/routes/product.router");
-// imported helpers
-const securityMiddleware = require("./src/helpers/important/security.helper");
-const { connectDB } = require("./src/helpers/important/common.helper");
+// imported config
+const securityMiddleware = require("./src/config/security.config");
+const { connectDB } = require("./src/config/db.config");
+const { env_port } = require("./src/config/dotenv.config");
 
 // implementing security middlewares
 securityMiddleware(app);
@@ -23,4 +24,7 @@ app.use("*", (req, res) => {
   res.status(404).json({ status: "fail", data: "wrong connection" });
 });
 
-module.exports = app;
+
+app.listen(env_port, () => {
+    console.log(`server is running`)
+})

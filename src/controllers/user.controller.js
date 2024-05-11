@@ -1,3 +1,4 @@
+const { sendError } = require("../helpers/response.helper");
 const {
   RegistrationService,
   LoginService,
@@ -9,7 +10,6 @@ const {
   RecoveryPasswordService,
 } = require("../services/user.service");
 
-const { sendError } = require("../helpers/important/common.helper");
 
 exports.Registration = async (req, res) => {
   let result = await RegistrationService(req);

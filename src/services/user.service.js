@@ -1,20 +1,17 @@
 const UserModel = require("../models/user/user.model");
 const OTPModel = require("../models/user/otp.model");
-// helpers
-const { CreateOTP, SendOTP } = require("../helpers/important/email.helper");
-const {
-  EncodePassword,
-  DecodePassword,
-} = require("../helpers/others/bcrypt.helper");
 const {
   ValidateEmail,
   ValidatePassword,
   ValidatePhoneNumber,
-} = require("../helpers/others/regex.helper");
+} = require("../helpers/regex.helper");
 const {
-  EncodeToken,
-  SetCookie,
-} = require("../helpers/important/common.helper");
+  DecodePassword,
+  EncodePassword,
+} = require("../utilities/bcrypt.utility");
+const { EncodeToken } = require("../utilities/jwt.utility");
+const { CreateOTP, SendOTP } = require("../helpers/otp.helper");
+// helpers
 
 exports.RegistrationService = async (req) => {
   try {
