@@ -33,7 +33,7 @@ npm install
 
 ## 4. Configure MongoDB:
 - ### Set up a MongoDB database either locally or using a cloud-based service.
-- ### Update the MongoDB connection URI in helper/database.helper.js or create a .env file and add URL there
+- ### Update the MongoDB connection URI in config/db.config.js or create a .env file and add URL there
 
 ## 5. Start the Server:
 
